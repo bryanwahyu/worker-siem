@@ -1,5 +1,8 @@
 # mini-siem-worker
 
+[![CI](https://github.com/bryanwahyu/worker-siem/actions/workflows/ci.yml/badge.svg)](https://github.com/bryanwahyu/worker-siem/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A concurrent worker agent for the Mini SIEM API built with Go and a DDD-inspired architecture. The worker tails local logs, validates and transforms them into normalized events, uploads them to the Mini SIEM API, and guarantees at-least-once delivery via a persistent spool.
 
 ## Features
@@ -8,11 +11,13 @@ A concurrent worker agent for the Mini SIEM API built with Go and a DDD-inspired
 - Concurrent worker pool with configurable batch size, interval, and concurrency
 - Disk-backed spool with exponential backoff retries and manual flush command
 - Dry-run mode that parses and spools without API calls
-- Prometheus metrics and structured Zerolog logging
+- Prometheus-format metrics and structured JSON logging, standard library only
 - Configuration via YAML and environment variables
 
 ## Getting Started
 ```bash
+go install github.com/bryanwahyu/worker-siem/cmd/worker@latest   # installs as `worker`; or build from source:
+
 make build    # Compile the mini-siem-worker binary
 make test     # Run unit tests
 make run      # Run worker using default configs/worker.yaml
@@ -47,7 +52,7 @@ tailers:
 host_id: my-node-1
 ```
 
-Environment variables prefixed with `MINI_SIEM_` override config values (e.g. `MINI_SIEM_API_API_KEY`).
+Environment variables override config values, for example `MINI_SIEM_API_KEY`, `MINI_SIEM_API_BASE_URL`, `MINI_SIEM_SPOOL_DIR` and `MINI_SIEM_WORKER_CONCURRENCY`. The full list is in `internal/infrastructure/config/config.go`.
 
 ### Commands
 - `mini-siem-worker run` – start the worker and all background goroutines
@@ -63,7 +68,7 @@ Metrics are exposed at `/metrics` on the configured listen address. Key counters
 - `mini_siem_worker_events_failed_total`
 - `mini_siem_worker_spool_queue_size`
 
-Logs are emitted in JSON via Zerolog and include structured fields.
+Logs are written to stdout as one JSON object per line.
 
 ## Deployment
 - `Dockerfile` supports a multi-stage build producing a minimal deployment image.
@@ -71,3 +76,9 @@ Logs are emitted in JSON via Zerolog and include structured fields.
 
 ## Testing
 Unit tests focus on domain value objects, use cases, and persistence adapters. Extend with integration tests for tailers or HTTP repositories as needed.
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+[MIT](LICENSE)

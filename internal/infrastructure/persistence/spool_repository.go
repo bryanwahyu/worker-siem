@@ -53,7 +53,7 @@ func (r *DiskSpoolRepository) Enqueue(ctx context.Context, item entities.SpoolIt
 	default:
 	}
 
-	if err := os.MkdirAll(r.Directory, 0o755); err != nil {
+	if err := os.MkdirAll(r.Directory, 0o700); err != nil {
 		return err
 	}
 
@@ -81,7 +81,7 @@ func (r *DiskSpoolRepository) Enqueue(ctx context.Context, item entities.SpoolIt
 
 	path := r.pathFor(item.Event.ID)
 	tmpPath := path + ".tmp"
-	if err := os.WriteFile(tmpPath, data, 0o644); err != nil {
+	if err := os.WriteFile(tmpPath, data, 0o600); err != nil {
 		return err
 	}
 
