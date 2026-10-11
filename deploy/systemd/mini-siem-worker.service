@@ -1,0 +1,24 @@
+[Unit]
+Description=Mini SIEM Worker
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/mini-siem-worker run --config /etc/mini-siem/worker.yaml
+WorkingDirectory=/var/lib/mini-siem
+Restart=on-failure
+RestartSec=5s
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ReadWritePaths=/var/lib/mini-siem /var/lib/mini-siem/spool
+
+[Install]
+WantedBy=multi-user.target

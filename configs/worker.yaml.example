@@ -1,0 +1,24 @@
+api:
+  base_url: "https://mini-siem.local"
+  api_key: "${MINI_SIEM_API_KEY}"
+  timeout: 10s
+
+tailers:
+  files:
+    - "/var/log/system.log"
+  journald_unit: ""
+
+worker:
+  batch_size: 100
+  batch_interval: 2s
+  concurrency: 4
+
+spool:
+  directory: "/var/lib/mini-siem/spool"
+  flush_interval: 30s
+
+metrics:
+  listen_addr: ":2112"
+
+host_id: ""
+dry_run: false
